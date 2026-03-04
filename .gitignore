@@ -1,0 +1,6 @@
+node_modules/
+data/projects.json
+alberts-projects.md
+add-old-projects.js
+seed.js
+.playwright-mcp/
