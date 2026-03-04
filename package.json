@@ -1,0 +1,13 @@
+{
+  "name": "project-tracker",
+  "version": "1.0.0",
+  "description": "Personal project progress tracking dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

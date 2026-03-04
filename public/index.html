@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Tracker</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%230d1117'/><rect x='12' y='20' width='55' height='8' rx='4' fill='%233fb950'/><rect x='12' y='38' width='40' height='8' rx='4' fill='%2358a6ff'/><rect x='12' y='56' width='68' height='8' rx='4' fill='%23d29922'/><rect x='12' y='74' width='30' height='8' rx='4' fill='%23bc8cff'/></svg>">
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d; --bg4: #30363d;
+  --fg: #e6edf3; --fg2: #8b949e; --fg3: #484f58;
+  --accent: #58a6ff; --border: #30363d;
+  --green: #3fb950; --amber: #d29922; --blue: #58a6ff; --red: #f85149; --gray: #8b949e;
+  --radius: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--fg); font-size: 14px; }
+a { color: var(--accent); text-decoration: none; }
+
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.btn { padding: 6px 14px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg3); color: var(--fg); cursor: pointer; font-size: 13px; }
+.btn:hover { background: var(--bg4); }
+.btn-primary { background: #238636; border-color: #2ea043; }
+.btn-primary:hover { background: #2ea043; }
+.view-toggle { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.view-toggle button { padding: 6px 12px; border: none; background: var(--bg3); color: var(--fg2); cursor: pointer; font-size: 13px; }
+.view-toggle button.active { background: var(--accent); color: #fff; }
+
+/* Filters */
+.filters { display: flex; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; align-items: center; }
+.filters select, .filters input { padding: 5px 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg3); color: var(--fg); font-size: 13px; }
+.filters input { width: 200px; }
+
+/* Ledger */
+.ledger { padding: 0 20px 20px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { color: var(--fg2); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; user-select: none; position: sticky; top: 0; background: var(--bg); }
+th:hover { color: var(--fg); }
+th .sort-arrow { margin-left: 4px; font-size: 10px; }
+tr:hover { background: var(--bg2); }
+tr { cursor: pointer; }
+
+/* Badges */
+.badge { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; display: inline-block; }
+.status-active { background: rgba(63,185,80,0.15); color: var(--green); }
+.status-paused { background: rgba(210,153,34,0.15); color: var(--amber); }
+.status-done { background: rgba(88,166,255,0.15); color: var(--blue); }
+.status-cancelled { background: rgba(248,81,73,0.15); color: var(--red); }
+.status-archived { background: rgba(139,148,158,0.15); color: var(--gray); }
+.type-code { background: rgba(88,166,255,0.1); color: #79c0ff; }
+.type-creative { background: rgba(188,140,255,0.1); color: #bc8cff; }
+.type-life { background: rgba(63,185,80,0.1); color: #7ee787; }
+.type-business { background: rgba(210,153,34,0.1); color: #e3b341; }
+
+/* Pipeline / Kanban */
+.pipeline { display: flex; gap: 12px; padding: 12px 20px; overflow-x: auto; min-height: calc(100vh - 120px); }
+.pipeline-col { flex: 1; min-width: 220px; background: var(--bg2); border-radius: var(--radius); padding: 12px; }
+.pipeline-col h3 { font-size: 13px; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.pipeline-col h3 .count { background: var(--bg4); padding: 1px 7px; border-radius: 10px; font-size: 11px; }
+.card { background: var(--bg3); border-radius: var(--radius); padding: 10px; margin-bottom: 8px; cursor: pointer; border-left: 3px solid transparent; }
+.card:hover { background: var(--bg4); }
+.card .card-name { font-weight: 500; margin-bottom: 4px; font-size: 13px; }
+.card .card-meta { font-size: 11px; color: var(--fg2); display: flex; gap: 6px; }
+.card.st-active { border-left-color: var(--green); }
+.card.st-paused { border-left-color: var(--amber); }
+.card.st-done { border-left-color: var(--blue); }
+.card.st-cancelled { border-left-color: var(--red); }
+.card.st-archived { border-left-color: var(--gray); }
+
+/* Context Menu */
+.ctx-menu { position: fixed; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 0; min-width: 180px; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.ctx-menu div { padding: 6px 14px; cursor: pointer; font-size: 13px; }
+.ctx-menu div:hover { background: var(--bg3); }
+.ctx-menu .ctx-separator { height: 1px; background: var(--border); margin: 4px 0; padding: 0; cursor: default; }
+.ctx-menu .ctx-sub { position: relative; }
+.ctx-menu .ctx-sub > .ctx-submenu { display: none; position: absolute; left: 100%; top: -4px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 0; min-width: 150px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.ctx-menu .ctx-sub:hover > .ctx-submenu { display: block; }
+
+/* Detail Panel */
+.overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 500; }
+.detail-panel { position: fixed; top: 0; right: 0; width: 480px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 501; overflow-y: auto; padding: 20px; transform: translateX(100%); transition: transform 0.2s ease; }
+.detail-panel.open { transform: translateX(0); }
+.detail-panel h2 { font-size: 18px; margin-bottom: 16px; padding-right: 30px; }
+.detail-panel .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--fg2); font-size: 20px; cursor: pointer; }
+.detail-panel .close-btn:hover { color: var(--fg); }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12px; color: var(--fg2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.field input, .field select, .field textarea { width: 100%; padding: 6px 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg3); color: var(--fg); font-size: 13px; font-family: inherit; }
+.field textarea { min-height: 120px; resize: vertical; }
+.detail-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+/* Add Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 600; display: flex; align-items: center; justify-content: center; }
+.modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; width: 440px; max-height: 80vh; overflow-y: auto; }
+.modal h2 { margin-bottom: 16px; }
+
+/* Summary bar */
+.summary { display: flex; gap: 16px; padding: 8px 20px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--fg2); align-items: center; }
+.summary .stat { display: flex; align-items: center; gap: 4px; }
+.summary .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Project Tracker</h1>
+  <div class="header-actions">
+    <div class="view-toggle">
+      <button id="btn-ledger" class="active" onclick="setView('ledger')">Ledger</button>
+      <button id="btn-pipeline" onclick="setView('pipeline')">Pipeline</button>
+    </div>
+    <button class="btn" onclick="exportData()" title="Export JSON">Export</button>
+    <button class="btn" onclick="document.getElementById('import-file').click()" title="Import JSON">Import</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-primary" onclick="openAddModal()">+ New Project</button>
+  </div>
+</div>
+
+<div id="summary" class="summary"></div>
+
+<div class="filters">
+  <select id="f-type" onchange="render()"><option value="">All Types</option><option value="code">Code</option><option value="creative">Digital Creative</option><option value="life">Life &amp; Hobby</option><option value="business">Business &amp; Admin</option></select>
+  <select id="f-phase" onchange="render()"><option value="">All Phases</option><option value="discovery">Discovery</option><option value="planning">Planning</option><option value="development">Development</option><option value="polish">Polish</option><option value="maintenance">Maintenance</option></select>
+  <select id="f-status" onchange="render()"><option value="">All Statuses</option><option value="active">Active</option><option value="paused">Paused</option><option value="done">Done</option><option value="cancelled">Cancelled</option><option value="archived">Archived</option></select>
+  <select id="f-category" onchange="render()"><option value="">All Categories</option></select>
+  <input type="text" id="f-search" placeholder="Search..." oninput="render()">
+</div>
+
+<div id="ledger-view" class="ledger"></div>
+<div id="pipeline-view" class="pipeline hidden"></div>
+
+<!-- Context Menu -->
+<div id="ctx-menu" class="ctx-menu hidden"></div>
+
+<!-- Detail Panel -->
+<div id="overlay" class="overlay hidden" onclick="closeDetail()"></div>
+<div id="detail-panel" class="detail-panel"></div>
+
+<!-- Add Modal -->
+<div id="add-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h2>New Project</h2>
+    <div class="field"><label>Name</label><input id="add-name" placeholder="Project name"></div>
+    <div class="field"><label>Type</label><select id="add-type"><option value="code">Code</option><option value="creative">Digital Creative</option><option value="life">Life &amp; Hobby</option><option value="business">Business &amp; Admin</option></select></div>
+    <div class="field"><label>Phase</label><select id="add-phase"><option value="discovery">Discovery</option><option value="planning">Planning</option><option value="development">Development</option><option value="polish">Polish</option><option value="maintenance">Maintenance</option></select></div>
+    <div class="field"><label>Category</label><input id="add-category" placeholder="e.g. personal"></div>
+    <div class="field"><label>Path</label><input id="add-path" placeholder="B:\REPOS\..."></div>
+    <div class="field"><label>Description</label><input id="add-desc" placeholder="One-liner summary"></div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" onclick="submitAdd()">Create</button>
+      <button class="btn" onclick="closeAddModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '/api/projects';
+const TYPES = { code: 'Code', creative: 'Digital Creative', life: 'Life & Hobby', business: 'Business & Admin' };
+const PHASES = ['discovery', 'planning', 'development', 'polish', 'maintenance'];
+const PHASE_LABELS = { discovery: 'Discovery', planning: 'Planning', development: 'Development', polish: 'Polish', maintenance: 'Maintenance' };
+const STATUSES = ['active', 'paused', 'done', 'cancelled', 'archived'];
+
+let projects = [];
+let currentView = 'ledger';
+let sortCol = 'name';
+let sortDir = 1;
+
+async function fetchProjects() {
+  const res = await fetch(API);
+  projects = await res.json();
+  populateCategories();
+  render();
+}
+
+function populateCategories() {
+  const cats = [...new Set(projects.map(p => p.category).filter(Boolean))].sort();
+  const sel = document.getElementById('f-category');
+  const val = sel.value;
+  sel.innerHTML = '<option value="">All Categories</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+  sel.value = val;
+}
+
+function filtered() {
+  const t = document.getElementById('f-type').value;
+  const ph = document.getElementById('f-phase').value;
+  const s = document.getElementById('f-status').value;
+  const c = document.getElementById('f-category').value;
+  const q = document.getElementById('f-search').value.toLowerCase();
+  return projects.filter(p =>
+    (!t || p.type === t) &&
+    (!ph || p.phase === ph) &&
+    (!s || p.status === s) &&
+    (!c || p.category === c) &&
+    (!q || p.name.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q))
+  );
+}
+
+function sorted(list) {
+  return [...list].sort((a, b) => {
+    let va = a[sortCol] || '', vb = b[sortCol] || '';
+    if (sortCol === 'phase') { va = PHASES.indexOf(va); vb = PHASES.indexOf(vb); }
+    if (va < vb) return -1 * sortDir;
+    if (va > vb) return 1 * sortDir;
+    return 0;
+  });
+}
+
+function setSort(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = 1; }
+  render();
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('btn-ledger').classList.toggle('active', v === 'ledger');
+  document.getElementById('btn-pipeline').classList.toggle('active', v === 'pipeline');
+  document.getElementById('ledger-view').classList.toggle('hidden', v !== 'ledger');
+  document.getElementById('pipeline-view').classList.toggle('hidden', v !== 'pipeline');
+  render();
+}
+
+function render() {
+  renderSummary();
+  if (currentView === 'ledger') renderLedger();
+  else renderPipeline();
+}
+
+function renderSummary() {
+  const total = projects.length;
+  const counts = { active: 0, paused: 0, done: 0, cancelled: 0, archived: 0 };
+  projects.forEach(p => { if (counts[p.status] !== undefined) counts[p.status]++; });
+  const colors = { active: 'var(--green)', paused: 'var(--amber)', done: 'var(--blue)', cancelled: 'var(--red)', archived: 'var(--gray)' };
+  let html = `<span style="font-weight:500;color:var(--fg)">${total} projects</span>`;
+  for (const [s, c] of Object.entries(counts)) {
+    if (c > 0) html += `<span class="stat"><span class="dot" style="background:${colors[s]}"></span>${c} ${s}</span>`;
+  }
+  document.getElementById('summary').innerHTML = html;
+}
+
+function arrow(col) {
+  if (sortCol !== col) return '';
+  return `<span class="sort-arrow">${sortDir === 1 ? '▲' : '▼'}</span>`;
+}
+
+function renderLedger() {
+  const list = sorted(filtered());
+  const cols = [
+    ['name', 'Name'], ['type', 'Type'], ['phase', 'Phase'], ['status', 'Status'],
+    ['category', 'Category'], ['startDate', 'Start Date'], ['updatedAt', 'Updated']
+  ];
+  let html = `<table><thead><tr>${cols.map(([k, l]) => `<th onclick="setSort('${k}')">${l}${arrow(k)}</th>`).join('')}</tr></thead><tbody>`;
+  for (const p of list) {
+    html += `<tr onclick="openDetail('${p.id}')" oncontextmenu="showCtx(event,'${p.id}')">
+      <td>${esc(p.name)}</td>
+      <td><span class="badge type-${p.type}">${TYPES[p.type] || p.type}</span></td>
+      <td>${PHASE_LABELS[p.phase] || p.phase}</td>
+      <td><span class="badge status-${p.status}">${p.status}</span></td>
+      <td>${esc(p.category)}</td>
+      <td>${p.startDate || ''}</td>
+      <td>${fmtDate(p.updatedAt)}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  if (!list.length) html += '<p style="text-align:center;color:var(--fg2);margin-top:40px">No projects match filters</p>';
+  document.getElementById('ledger-view').innerHTML = html;
+}
+
+function renderPipeline() {
+  const list = filtered();
+  const container = document.getElementById('pipeline-view');
+  let html = '';
+  for (const phase of PHASES) {
+    const cards = list.filter(p => p.phase === phase);
+    html += `<div class="pipeline-col"><h3>${PHASE_LABELS[phase]} <span class="count">${cards.length}</span></h3>`;
+    for (const p of cards) {
+      html += `<div class="card st-${p.status}" onclick="openDetail('${p.id}')" oncontextmenu="showCtx(event,'${p.id}')">
+        <div class="card-name">${esc(p.name)}</div>
+        <div class="card-meta"><span class="badge type-${p.type}">${TYPES[p.type] || p.type}</span><span class="badge status-${p.status}">${p.status}</span></div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+// Context menu
+let ctxProjectId = null;
+function showCtx(e, id) {
+  e.preventDefault();
+  e.stopPropagation();
+  ctxProjectId = id;
+  const p = projects.find(x => x.id === id);
+  const menu = document.getElementById('ctx-menu');
+
+  let html = '';
+  if (p.path) html += `<div onclick="openFolder('${id}')">Open Folder</div>`;
+  html += `<div class="ctx-sub">Set Status ▸<div class="ctx-submenu">${STATUSES.map(s => `<div onclick="setField('${id}','status','${s}')">${s}${p.status === s ? ' ✓' : ''}</div>`).join('')}</div></div>`;
+  html += `<div class="ctx-sub">Move Phase ▸<div class="ctx-submenu">${PHASES.map(ph => `<div onclick="setField('${id}','phase','${ph}')">${PHASE_LABELS[ph]}${p.phase === ph ? ' ✓' : ''}</div>`).join('')}</div></div>`;
+  html += `<div class="ctx-separator"></div>`;
+  html += `<div onclick="deleteProject('${id}')" style="color:var(--red)">Delete</div>`;
+
+  menu.innerHTML = html;
+  menu.classList.remove('hidden');
+  menu.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px';
+  menu.style.top = Math.min(e.clientY, window.innerHeight - 200) + 'px';
+}
+
+document.addEventListener('click', () => document.getElementById('ctx-menu').classList.add('hidden'));
+
+async function openFolder(id) {
+  document.getElementById('ctx-menu').classList.add('hidden');
+  await fetch(`${API}/${id}/open-folder`, { method: 'POST' });
+}
+
+async function setField(id, field, value) {
+  document.getElementById('ctx-menu').classList.add('hidden');
+  await fetch(`${API}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ [field]: value }) });
+  await fetchProjects();
+}
+
+async function deleteProject(id) {
+  document.getElementById('ctx-menu').classList.add('hidden');
+  if (!confirm('Delete this project?')) return;
+  await fetch(`${API}/${id}`, { method: 'DELETE' });
+  await fetchProjects();
+}
+
+// Detail panel
+function openDetail(id) {
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  const panel = document.getElementById('detail-panel');
+  panel.innerHTML = `
+    <button class="close-btn" onclick="closeDetail()">✕</button>
+    <h2>${esc(p.name)}</h2>
+    <div class="field"><label>Name</label><input id="d-name" value="${esc(p.name)}"></div>
+    <div class="field"><label>Type</label><select id="d-type">${Object.entries(TYPES).map(([k, v]) => `<option value="${k}"${p.type === k ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
+    <div class="field"><label>Phase</label><select id="d-phase">${PHASES.map(ph => `<option value="${ph}"${p.phase === ph ? ' selected' : ''}>${PHASE_LABELS[ph]}</option>`).join('')}</select></div>
+    <div class="field"><label>Status</label><select id="d-status">${STATUSES.map(s => `<option value="${s}"${p.status === s ? ' selected' : ''}>${s}</option>`).join('')}</select></div>
+    <div class="field"><label>Category</label><input id="d-category" value="${esc(p.category)}"></div>
+    <div class="field"><label>Path</label><input id="d-path" value="${esc(p.path)}"></div>
+    <div class="field"><label>Description</label><input id="d-desc" value="${esc(p.description)}"></div>
+    <div class="field"><label>Tags (comma-separated)</label><input id="d-tags" value="${(p.tags || []).join(', ')}"></div>
+    <div class="field"><label>Notes</label><textarea id="d-notes">${esc(p.notes)}</textarea></div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" onclick="saveDetail('${id}')">Save</button>
+      ${p.path ? `<button class="btn" onclick="openFolder('${id}')">Open Folder</button>` : ''}
+    </div>
+  `;
+  document.getElementById('overlay').classList.remove('hidden');
+  panel.classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+async function saveDetail(id) {
+  const body = {
+    name: document.getElementById('d-name').value,
+    type: document.getElementById('d-type').value,
+    phase: document.getElementById('d-phase').value,
+    status: document.getElementById('d-status').value,
+    category: document.getElementById('d-category').value,
+    path: document.getElementById('d-path').value,
+    description: document.getElementById('d-desc').value,
+    notes: document.getElementById('d-notes').value,
+    tags: document.getElementById('d-tags').value.split(',').map(t => t.trim()).filter(Boolean)
+  };
+  await fetch(`${API}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  closeDetail();
+  await fetchProjects();
+}
+
+// Add modal
+function openAddModal() { document.getElementById('add-modal').classList.remove('hidden'); document.getElementById('add-name').focus(); }
+function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
+
+async function submitAdd() {
+  const name = document.getElementById('add-name').value.trim();
+  if (!name) return alert('Name is required');
+  const body = {
+    name,
+    type: document.getElementById('add-type').value,
+    phase: document.getElementById('add-phase').value,
+    category: document.getElementById('add-category').value || 'personal',
+    path: document.getElementById('add-path').value,
+    description: document.getElementById('add-desc').value
+  };
+  await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  closeAddModal();
+  document.getElementById('add-name').value = '';
+  document.getElementById('add-desc').value = '';
+  document.getElementById('add-path').value = '';
+  await fetchProjects();
+}
+
+// Export / Import
+function exportData() {
+  const blob = new Blob([JSON.stringify({ meta: { version: 1, lastModified: new Date().toISOString() }, projects }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'projects.json'; a.click();
+}
+async function importData(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const text = await file.text();
+  try {
+    const imported = JSON.parse(text);
+    const list = imported.projects || imported;
+    if (!Array.isArray(list)) throw new Error('Invalid format');
+    if (!confirm(`Import ${list.length} projects? This will ADD to your existing projects.`)) return;
+    for (const p of list) {
+      await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) });
+    }
+    await fetchProjects();
+  } catch (err) { alert('Invalid JSON file: ' + err.message); }
+  e.target.value = '';
+}
+
+// Escape HTML
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString(); }
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDetail(); closeAddModal(); document.getElementById('ctx-menu').classList.add('hidden'); }
+});
+
+fetchProjects();
+</script>
+</body>
+</html>
