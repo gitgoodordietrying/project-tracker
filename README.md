@@ -112,7 +112,7 @@ All taxonomy values (types, groups, phases, statuses) are fully customizable:
   <img src="docs/screenshot-settings.png" alt="Settings UI" width="700">
 </p>
 
-The repo scanner lets you configure directories to scan for git repositories. Found repos can be imported as new projects with one click.
+The **repo scanner** (🔍) finds git repositories in your configured directories (up to 4 levels deep) and lets you import them as projects with one click. Non-code projects — design documents, personal files, house projects, travel plans — are added manually with **+ New Project**.
 
 Click any project to open the detail panel with all fields, notes, and tags:
 
