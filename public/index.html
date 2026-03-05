@@ -13,6 +13,12 @@
   --green: #3fb950; --amber: #d29922; --blue: #58a6ff; --red: #f85149; --gray: #8b949e;
   --radius: 6px;
 }
+html.light {
+  --bg: #ffffff; --bg2: #f6f8fa; --bg3: #e8ecf0; --bg4: #d0d7de;
+  --fg: #1f2328; --fg2: #656d76; --fg3: #8b949e;
+  --accent: #0969da; --border: #d0d7de;
+  --green: #1a7f37; --amber: #9a6700; --blue: #0969da; --red: #cf222e; --gray: #656d76;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--fg); font-size: 14px; }
 a { color: var(--accent); text-decoration: none; }
@@ -29,6 +35,8 @@ a { color: var(--accent); text-decoration: none; }
 .view-toggle { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .view-toggle button { padding: 6px 12px; border: none; background: var(--bg3); color: var(--fg2); cursor: pointer; font-size: 13px; }
 .view-toggle button.active { background: var(--accent); color: #fff; }
+.theme-toggle { background: none; border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 8px; cursor: pointer; font-size: 16px; line-height: 1; color: var(--fg); }
+.theme-toggle:hover { background: var(--bg3); }
 
 /* Filters */
 .filters { display: flex; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; align-items: center; }
@@ -128,16 +136,17 @@ tr { cursor: pointer; }
 <div class="header">
   <h1>Project Tracker</h1>
   <div class="header-actions">
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">🌙</button>
     <div class="view-toggle">
-      <button id="btn-ledger" class="active" onclick="setView('ledger')">Ledger</button>
-      <button id="btn-pipeline" onclick="setView('pipeline')">Pipeline</button>
+      <button id="btn-ledger" class="active" onclick="setView('ledger')" title="Sortable table view">Ledger</button>
+      <button id="btn-pipeline" onclick="setView('pipeline')" title="Kanban board grouped by phase">Pipeline</button>
     </div>
     <button class="btn btn-icon" onclick="openScanModal()" title="Scan directories for git repositories to import as projects">&#128269;</button>
-    <button class="btn btn-icon" onclick="openSettingsModal()" title="Settings">&#9881;</button>
-    <button class="btn" onclick="exportData()" title="Export JSON">Export</button>
-    <button class="btn" onclick="document.getElementById('import-file').click()" title="Import JSON">Import</button>
+    <button class="btn btn-icon" onclick="openSettingsModal()" title="Customize types, groups, phases, statuses, and scan paths">&#x1F527;</button>
+    <button class="btn" onclick="exportData()" title="Download all projects as a JSON file">Export</button>
+    <button class="btn" onclick="document.getElementById('import-file').click()" title="Load projects from a JSON file">Import</button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
-    <button class="btn btn-primary" onclick="openAddModal()">+ New Project</button>
+    <button class="btn btn-primary" onclick="openAddModal()" title="Add a new project manually">+ New Project</button>
   </div>
 </div>
 
@@ -150,7 +159,7 @@ tr { cursor: pointer; }
   <select id="f-status" onchange="render()"><option value="">All Statuses</option></select>
   <select id="f-category" onchange="render()"><option value="">All Categories</option></select>
   <input type="text" id="f-search" placeholder="Search..." oninput="render()">
-  <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--fg2);margin-left:auto;cursor:pointer;user-select:none"><input type="checkbox" id="f-past" onchange="render()" style="cursor:pointer">Show past</label>
+  <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--fg2);margin-left:auto;cursor:pointer;user-select:none" title="Include done, cancelled, and archived projects"><input type="checkbox" id="f-past" onchange="render()" style="cursor:pointer">Show past</label>
 </div>
 
 <div id="ledger-view" class="ledger"></div>
@@ -864,6 +873,26 @@ async function onColDrop(e) {
   const phase = e.currentTarget.dataset.phase;
   if (id && phase) await setField(id, 'phase', phase);
 }
+
+// Theme toggle
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.classList.add('light');
+  } else {
+    document.documentElement.classList.remove('light');
+  }
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = theme === 'light' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+  localStorage.setItem('theme', theme);
+}
+
+function toggleTheme() {
+  const isLight = document.documentElement.classList.contains('light');
+  applyTheme(isLight ? 'dark' : 'light');
+}
+
+// Apply saved theme immediately
+applyTheme(localStorage.getItem('theme') || 'dark');
 
 // Init: load config first, then projects
 async function init() {

@@ -1,15 +1,15 @@
 <p align="center">
-  <img src="docs/banner.svg" alt="Project Tracker — A human-agent shared ledger" width="800">
+  <img src="images/banner.svg" alt="Project Tracker — A human-agent shared ledger" width="800">
 </p>
 
 A single-page dashboard for tracking all your projects. Browser UI for humans, JSON file + REST API for AI coding agents. No database, no auth, no cloud — just a JSON file on your disk that both you and your agents can read and write.
 
 <p align="center">
-  <img src="docs/screenshot-ledger.png" alt="Ledger View" width="700">
+  <img src="images/screenshot-ledger.png" alt="Ledger View" width="700">
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-pipeline.png" alt="Pipeline View" width="700">
+  <img src="images/screenshot-pipeline.png" alt="Pipeline View" width="700">
 </p>
 
 ## Quick Start
@@ -109,7 +109,7 @@ All taxonomy values (types, groups, phases, statuses) are fully customizable:
 - **API** — `GET /api/config` to read, `PUT /api/config` to update
 
 <p align="center">
-  <img src="docs/screenshot-settings.png" alt="Settings UI" width="700">
+  <img src="images/screenshot-settings.png" alt="Settings UI" width="700">
 </p>
 
 The **repo scanner** (🔍) finds git repositories in your configured directories (up to 4 levels deep) and lets you import them as projects with one click. Non-code projects — design documents, personal files, house projects, travel plans — are added manually with **+ New Project**.
@@ -117,7 +117,7 @@ The **repo scanner** (🔍) finds git repositories in your configured directorie
 Click any project to open the detail panel with all fields, notes, and tags:
 
 <p align="center">
-  <img src="docs/screenshot-detail.png" alt="Detail Panel" width="700">
+  <img src="images/screenshot-detail.png" alt="Detail Panel" width="700">
 </p>
 
 ## Project Schema
