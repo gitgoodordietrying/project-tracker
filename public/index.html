@@ -25,6 +25,7 @@ a { color: var(--accent); text-decoration: none; }
 .btn:hover { background: var(--bg4); }
 .btn-primary { background: #238636; border-color: #2ea043; }
 .btn-primary:hover { background: #2ea043; }
+.btn-icon { padding: 6px 10px; font-size: 16px; line-height: 1; }
 .view-toggle { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .view-toggle button { padding: 6px 12px; border: none; background: var(--bg3); color: var(--fg2); cursor: pointer; font-size: 13px; }
 .view-toggle button.active { background: var(--accent); color: #fff; }
@@ -51,25 +52,24 @@ tr { cursor: pointer; }
 .status-done { background: rgba(88,166,255,0.15); color: var(--blue); }
 .status-cancelled { background: rgba(248,81,73,0.15); color: var(--red); }
 .status-archived { background: rgba(139,148,158,0.15); color: var(--gray); }
-.type-code { background: rgba(88,166,255,0.1); color: #79c0ff; }
-.type-creative { background: rgba(188,140,255,0.1); color: #bc8cff; }
-.type-life { background: rgba(63,185,80,0.1); color: #7ee787; }
-.type-business { background: rgba(210,153,34,0.1); color: #e3b341; }
 
 /* Pipeline / Kanban */
 .pipeline { display: flex; gap: 12px; padding: 12px 20px; overflow-x: auto; min-height: calc(100vh - 120px); }
 .pipeline-col { flex: 1; min-width: 220px; background: var(--bg2); border-radius: var(--radius); padding: 12px; }
 .pipeline-col h3 { font-size: 13px; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: flex; justify-content: space-between; }
 .pipeline-col h3 .count { background: var(--bg4); padding: 1px 7px; border-radius: 10px; font-size: 11px; }
-.card { background: var(--bg3); border-radius: var(--radius); padding: 10px; margin-bottom: 8px; cursor: pointer; border-left: 3px solid transparent; }
+.card { background: var(--bg3); border-radius: var(--radius); padding: 10px; margin-bottom: 8px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s, background 0.15s, opacity 0.2s, transform 0.2s; }
 .card:hover { background: var(--bg4); }
-.card .card-name { font-weight: 500; margin-bottom: 4px; font-size: 13px; }
-.card .card-meta { font-size: 11px; color: var(--fg2); display: flex; gap: 6px; }
-.card.st-active { border-left-color: var(--green); }
-.card.st-paused { border-left-color: var(--amber); }
-.card.st-done { border-left-color: var(--blue); }
-.card.st-cancelled { border-left-color: var(--red); }
-.card.st-archived { border-left-color: var(--gray); }
+.card .card-name { font-weight: 500; margin-bottom: 4px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .card-meta { font-size: 11px; color: var(--fg2); display: flex; gap: 6px; flex-wrap: wrap; }
+.card.st-active { border-color: var(--green); }
+.card.st-paused { border-color: var(--amber); }
+.card.st-done { border-color: var(--blue); }
+.card.st-cancelled { border-color: var(--red); opacity: 0.6; }
+.card.st-archived { border-color: var(--gray); opacity: 0.6; }
+.card.drag-held { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,0,0,0.5); z-index: 10; }
+.card.dragging { opacity: 0.4; }
+.pipeline-col.drag-over { background: var(--bg3); }
 
 /* Context Menu */
 .ctx-menu { position: fixed; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 0; min-width: 180px; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
@@ -93,10 +93,26 @@ tr { cursor: pointer; }
 .field textarea { min-height: 120px; resize: vertical; }
 .detail-actions { display: flex; gap: 8px; margin-top: 16px; }
 
-/* Add Modal */
+/* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 600; display: flex; align-items: center; justify-content: center; }
 .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; width: 440px; max-height: 80vh; overflow-y: auto; }
 .modal h2 { margin-bottom: 16px; }
+.modal-wide { width: 640px; }
+
+/* Settings sections */
+.settings-section { margin-bottom: 20px; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.settings-section h3 { font-size: 13px; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.settings-row input[type="text"] { flex: 1; padding: 4px 8px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg3); color: var(--fg); font-size: 13px; }
+.settings-row input[type="color"] { width: 32px; height: 28px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg3); cursor: pointer; padding: 2px; }
+.settings-row .btn-sm { padding: 3px 8px; font-size: 12px; }
+
+/* Scan results */
+.scan-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.scan-item.tracked { opacity: 0.5; }
+.scan-item label { flex: 1; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.scan-item .scan-path { font-size: 11px; color: var(--fg2); }
+.scan-item .scan-tracked { font-size: 11px; color: var(--amber); }
 
 /* Summary bar */
 .summary { display: flex; gap: 16px; padding: 8px 20px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--fg2); align-items: center; }
@@ -105,6 +121,7 @@ tr { cursor: pointer; }
 
 .hidden { display: none !important; }
 </style>
+<style id="dynamic-styles"></style>
 </head>
 <body>
 
@@ -115,6 +132,8 @@ tr { cursor: pointer; }
       <button id="btn-ledger" class="active" onclick="setView('ledger')">Ledger</button>
       <button id="btn-pipeline" onclick="setView('pipeline')">Pipeline</button>
     </div>
+    <button class="btn btn-icon" onclick="openScanModal()" title="Scan for repos">&#128269;</button>
+    <button class="btn btn-icon" onclick="openSettingsModal()" title="Settings">&#9881;</button>
     <button class="btn" onclick="exportData()" title="Export JSON">Export</button>
     <button class="btn" onclick="document.getElementById('import-file').click()" title="Import JSON">Import</button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
@@ -125,11 +144,13 @@ tr { cursor: pointer; }
 <div id="summary" class="summary"></div>
 
 <div class="filters">
-  <select id="f-type" onchange="render()"><option value="">All Types</option><option value="code">Code</option><option value="creative">Digital Creative</option><option value="life">Life &amp; Hobby</option><option value="business">Business &amp; Admin</option></select>
-  <select id="f-phase" onchange="render()"><option value="">All Phases</option><option value="discovery">Discovery</option><option value="planning">Planning</option><option value="development">Development</option><option value="polish">Polish</option><option value="maintenance">Maintenance</option></select>
-  <select id="f-status" onchange="render()"><option value="">All Statuses</option><option value="active">Active</option><option value="paused">Paused</option><option value="done">Done</option><option value="cancelled">Cancelled</option><option value="archived">Archived</option></select>
+  <select id="f-type" onchange="render()"><option value="">All Types</option></select>
+  <select id="f-group" onchange="render()"><option value="">All Groups</option></select>
+  <select id="f-phase" onchange="render()"><option value="">All Phases</option></select>
+  <select id="f-status" onchange="render()"><option value="">All Statuses</option></select>
   <select id="f-category" onchange="render()"><option value="">All Categories</option></select>
   <input type="text" id="f-search" placeholder="Search..." oninput="render()">
+  <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--fg2);margin-left:auto;cursor:pointer;user-select:none"><input type="checkbox" id="f-past" onchange="render()" style="cursor:pointer">Show past</label>
 </div>
 
 <div id="ledger-view" class="ledger"></div>
@@ -147,8 +168,9 @@ tr { cursor: pointer; }
   <div class="modal">
     <h2>New Project</h2>
     <div class="field"><label>Name</label><input id="add-name" placeholder="Project name"></div>
-    <div class="field"><label>Type</label><select id="add-type"><option value="code">Code</option><option value="creative">Digital Creative</option><option value="life">Life &amp; Hobby</option><option value="business">Business &amp; Admin</option></select></div>
-    <div class="field"><label>Phase</label><select id="add-phase"><option value="discovery">Discovery</option><option value="planning">Planning</option><option value="development">Development</option><option value="polish">Polish</option><option value="maintenance">Maintenance</option></select></div>
+    <div class="field"><label>Type</label><select id="add-type"></select></div>
+    <div class="field"><label>Group</label><select id="add-group"></select></div>
+    <div class="field"><label>Phase</label><select id="add-phase"></select></div>
     <div class="field"><label>Category</label><input id="add-category" placeholder="e.g. personal"></div>
     <div class="field"><label>Path</label><input id="add-path" placeholder="B:\REPOS\..."></div>
     <div class="field"><label>Description</label><input id="add-desc" placeholder="One-liner summary"></div>
@@ -159,17 +181,98 @@ tr { cursor: pointer; }
   </div>
 </div>
 
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal-overlay hidden">
+  <div class="modal modal-wide">
+    <h2>Settings</h2>
+    <div id="settings-content"></div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+      <button class="btn" onclick="closeSettingsModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scan Modal -->
+<div id="scan-modal" class="modal-overlay hidden">
+  <div class="modal modal-wide">
+    <h2>Scan for Repos</h2>
+    <div id="scan-content"><p style="color:var(--fg2)">Scanning...</p></div>
+    <div class="detail-actions">
+      <button id="scan-import-btn" class="btn btn-primary hidden" onclick="importScanned()">Import Selected</button>
+      <button class="btn" onclick="closeScanModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const API = '/api/projects';
-const TYPES = { code: 'Code', creative: 'Digital Creative', life: 'Life & Hobby', business: 'Business & Admin' };
-const PHASES = ['discovery', 'planning', 'development', 'polish', 'maintenance'];
-const PHASE_LABELS = { discovery: 'Discovery', planning: 'Planning', development: 'Development', polish: 'Polish', maintenance: 'Maintenance' };
-const STATUSES = ['active', 'paused', 'done', 'cancelled', 'archived'];
+
+let TYPES = {};
+let GROUPS = {};
+let PHASES = [];
+let PHASE_LABELS = {};
+let STATUSES = [];
+let CONFIG = {};
 
 let projects = [];
 let currentView = 'ledger';
 let sortCol = 'name';
 let sortDir = 1;
+
+async function fetchConfig() {
+  const res = await fetch('/api/config');
+  CONFIG = await res.json();
+  TYPES = {};
+  for (const [k, v] of Object.entries(CONFIG.types)) TYPES[k] = v.label;
+  GROUPS = {};
+  for (const [k, v] of Object.entries(CONFIG.groups)) GROUPS[k] = v.label;
+  PHASES = CONFIG.phases;
+  PHASE_LABELS = CONFIG.phaseLabels || {};
+  STATUSES = CONFIG.statuses;
+  rebuildDynamicUI();
+}
+
+function rebuildDynamicUI() {
+  // Dynamic CSS for type and group badges
+  let css = '';
+  for (const [k, v] of Object.entries(CONFIG.types)) {
+    css += `.type-${k} { background: ${hexToRgba(v.color, 0.1)}; color: ${v.color}; }\n`;
+  }
+  for (const [k, v] of Object.entries(CONFIG.groups)) {
+    css += `.group-${k} { background: ${hexToRgba(v.color, 0.1)}; color: ${v.color}; }\n`;
+  }
+  document.getElementById('dynamic-styles').textContent = css;
+
+  // Populate filter dropdowns
+  populateSelect('f-type', TYPES, 'All Types');
+  populateSelect('f-group', GROUPS, 'All Groups');
+  populateSelect('f-phase', Object.fromEntries(PHASES.map(p => [p, PHASE_LABELS[p] || p])), 'All Phases');
+  populateSelect('f-status', Object.fromEntries(STATUSES.map(s => [s, s])), 'All Statuses');
+
+  // Populate add-modal selects
+  populateSelect('add-type', TYPES);
+  populateSelect('add-group', GROUPS);
+  populateSelect('add-phase', Object.fromEntries(PHASES.map(p => [p, PHASE_LABELS[p] || p])));
+}
+
+function populateSelect(id, map, allLabel) {
+  const sel = document.getElementById(id);
+  const val = sel.value;
+  let html = allLabel ? `<option value="">${allLabel}</option>` : '';
+  for (const [k, v] of Object.entries(map)) {
+    html += `<option value="${k}">${esc(v)}</option>`;
+  }
+  sel.innerHTML = html;
+  sel.value = val;
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 
 async function fetchProjects() {
   const res = await fetch(API);
@@ -188,14 +291,18 @@ function populateCategories() {
 
 function filtered() {
   const t = document.getElementById('f-type').value;
+  const g = document.getElementById('f-group').value;
   const ph = document.getElementById('f-phase').value;
   const s = document.getElementById('f-status').value;
   const c = document.getElementById('f-category').value;
   const q = document.getElementById('f-search').value.toLowerCase();
+  const showPast = document.getElementById('f-past').checked;
   return projects.filter(p =>
     (!t || p.type === t) &&
+    (!g || p.group === g) &&
     (!ph || p.phase === ph) &&
     (!s || p.status === s) &&
+    (showPast || s === 'cancelled' || s === 'archived' || (p.status !== 'cancelled' && p.status !== 'archived')) &&
     (!c || p.category === c) &&
     (!q || p.name.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q))
   );
@@ -234,12 +341,13 @@ function render() {
 
 function renderSummary() {
   const total = projects.length;
-  const counts = { active: 0, paused: 0, done: 0, cancelled: 0, archived: 0 };
+  const counts = {};
+  STATUSES.forEach(s => counts[s] = 0);
   projects.forEach(p => { if (counts[p.status] !== undefined) counts[p.status]++; });
   const colors = { active: 'var(--green)', paused: 'var(--amber)', done: 'var(--blue)', cancelled: 'var(--red)', archived: 'var(--gray)' };
   let html = `<span style="font-weight:500;color:var(--fg)">${total} projects</span>`;
   for (const [s, c] of Object.entries(counts)) {
-    if (c > 0) html += `<span class="stat"><span class="dot" style="background:${colors[s]}"></span>${c} ${s}</span>`;
+    html += `<span class="stat"><span class="dot" style="background:${colors[s] || 'var(--fg3)'}"></span>${c} ${s}</span>`;
   }
   document.getElementById('summary').innerHTML = html;
 }
@@ -252,7 +360,7 @@ function arrow(col) {
 function renderLedger() {
   const list = sorted(filtered());
   const cols = [
-    ['name', 'Name'], ['type', 'Type'], ['phase', 'Phase'], ['status', 'Status'],
+    ['name', 'Name'], ['type', 'Type'], ['group', 'Group'], ['phase', 'Phase'], ['status', 'Status'],
     ['category', 'Category'], ['startDate', 'Start Date'], ['updatedAt', 'Updated']
   ];
   let html = `<table><thead><tr>${cols.map(([k, l]) => `<th onclick="setSort('${k}')">${l}${arrow(k)}</th>`).join('')}</tr></thead><tbody>`;
@@ -260,6 +368,7 @@ function renderLedger() {
     html += `<tr onclick="openDetail('${p.id}')" oncontextmenu="showCtx(event,'${p.id}')">
       <td>${esc(p.name)}</td>
       <td><span class="badge type-${p.type}">${TYPES[p.type] || p.type}</span></td>
+      <td><span class="badge group-${p.group}">${GROUPS[p.group] || p.group || ''}</span></td>
       <td>${PHASE_LABELS[p.phase] || p.phase}</td>
       <td><span class="badge status-${p.status}">${p.status}</span></td>
       <td>${esc(p.category)}</td>
@@ -278,16 +387,17 @@ function renderPipeline() {
   let html = '';
   for (const phase of PHASES) {
     const cards = list.filter(p => p.phase === phase);
-    html += `<div class="pipeline-col"><h3>${PHASE_LABELS[phase]} <span class="count">${cards.length}</span></h3>`;
+    html += `<div class="pipeline-col" data-phase="${phase}"><h3>${PHASE_LABELS[phase] || phase} <span class="count">${cards.length}</span></h3>`;
     for (const p of cards) {
-      html += `<div class="card st-${p.status}" onclick="openDetail('${p.id}')" oncontextmenu="showCtx(event,'${p.id}')">
+      html += `<div class="card st-${p.status}" data-id="${p.id}" onclick="openDetail('${p.id}')" oncontextmenu="showCtx(event,'${p.id}')">
         <div class="card-name">${esc(p.name)}</div>
-        <div class="card-meta"><span class="badge type-${p.type}">${TYPES[p.type] || p.type}</span><span class="badge status-${p.status}">${p.status}</span></div>
+        <div class="card-meta"><span class="badge type-${p.type}">${TYPES[p.type] || p.type}</span>${p.category ? `<span style="color:var(--fg3)">${esc(p.category)}</span>` : ''}</div>
       </div>`;
     }
     html += '</div>';
   }
   container.innerHTML = html;
+  initDragAndDrop();
 }
 
 // Context menu
@@ -301,8 +411,10 @@ function showCtx(e, id) {
 
   let html = '';
   if (p.path) html += `<div onclick="openFolder('${id}')">Open Folder</div>`;
-  html += `<div class="ctx-sub">Set Status ▸<div class="ctx-submenu">${STATUSES.map(s => `<div onclick="setField('${id}','status','${s}')">${s}${p.status === s ? ' ✓' : ''}</div>`).join('')}</div></div>`;
-  html += `<div class="ctx-sub">Move Phase ▸<div class="ctx-submenu">${PHASES.map(ph => `<div onclick="setField('${id}','phase','${ph}')">${PHASE_LABELS[ph]}${p.phase === ph ? ' ✓' : ''}</div>`).join('')}</div></div>`;
+  html += `<div class="ctx-sub">Set Type &#9656;<div class="ctx-submenu">${Object.entries(TYPES).map(([k, v]) => `<div onclick="setField('${id}','type','${k}')">${v}${p.type === k ? ' ✓' : ''}</div>`).join('')}</div></div>`;
+  html += `<div class="ctx-sub">Set Group &#9656;<div class="ctx-submenu">${Object.entries(GROUPS).map(([k, v]) => `<div onclick="setField('${id}','group','${k}')">${v}${p.group === k ? ' ✓' : ''}</div>`).join('')}</div></div>`;
+  html += `<div class="ctx-sub">Set Status &#9656;<div class="ctx-submenu">${STATUSES.map(s => `<div onclick="setField('${id}','status','${s}')">${s}${p.status === s ? ' ✓' : ''}</div>`).join('')}</div></div>`;
+  html += `<div class="ctx-sub">Move Phase &#9656;<div class="ctx-submenu">${PHASES.map(ph => `<div onclick="setField('${id}','phase','${ph}')">${PHASE_LABELS[ph] || ph}${p.phase === ph ? ' ✓' : ''}</div>`).join('')}</div></div>`;
   html += `<div class="ctx-separator"></div>`;
   html += `<div onclick="deleteProject('${id}')" style="color:var(--red)">Delete</div>`;
 
@@ -338,11 +450,12 @@ function openDetail(id) {
   if (!p) return;
   const panel = document.getElementById('detail-panel');
   panel.innerHTML = `
-    <button class="close-btn" onclick="closeDetail()">✕</button>
+    <button class="close-btn" onclick="closeDetail()">&#10005;</button>
     <h2>${esc(p.name)}</h2>
     <div class="field"><label>Name</label><input id="d-name" value="${esc(p.name)}"></div>
     <div class="field"><label>Type</label><select id="d-type">${Object.entries(TYPES).map(([k, v]) => `<option value="${k}"${p.type === k ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
-    <div class="field"><label>Phase</label><select id="d-phase">${PHASES.map(ph => `<option value="${ph}"${p.phase === ph ? ' selected' : ''}>${PHASE_LABELS[ph]}</option>`).join('')}</select></div>
+    <div class="field"><label>Group</label><select id="d-group">${Object.entries(GROUPS).map(([k, v]) => `<option value="${k}"${p.group === k ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
+    <div class="field"><label>Phase</label><select id="d-phase">${PHASES.map(ph => `<option value="${ph}"${p.phase === ph ? ' selected' : ''}>${PHASE_LABELS[ph] || ph}</option>`).join('')}</select></div>
     <div class="field"><label>Status</label><select id="d-status">${STATUSES.map(s => `<option value="${s}"${p.status === s ? ' selected' : ''}>${s}</option>`).join('')}</select></div>
     <div class="field"><label>Category</label><input id="d-category" value="${esc(p.category)}"></div>
     <div class="field"><label>Path</label><input id="d-path" value="${esc(p.path)}"></div>
@@ -367,6 +480,7 @@ async function saveDetail(id) {
   const body = {
     name: document.getElementById('d-name').value,
     type: document.getElementById('d-type').value,
+    group: document.getElementById('d-group').value,
     phase: document.getElementById('d-phase').value,
     status: document.getElementById('d-status').value,
     category: document.getElementById('d-category').value,
@@ -390,6 +504,7 @@ async function submitAdd() {
   const body = {
     name,
     type: document.getElementById('add-type').value,
+    group: document.getElementById('add-group').value,
     phase: document.getElementById('add-phase').value,
     category: document.getElementById('add-category').value || 'personal',
     path: document.getElementById('add-path').value,
@@ -400,6 +515,215 @@ async function submitAdd() {
   document.getElementById('add-name').value = '';
   document.getElementById('add-desc').value = '';
   document.getElementById('add-path').value = '';
+  await fetchProjects();
+}
+
+// --- Settings Modal ---
+
+function openSettingsModal() {
+  const modal = document.getElementById('settings-modal');
+  const content = document.getElementById('settings-content');
+  let html = '';
+
+  // Types
+  html += `<div class="settings-section"><h3>Types</h3><div id="settings-types">`;
+  for (const [k, v] of Object.entries(CONFIG.types)) {
+    html += settingsRow('type', k, v.label, v.color);
+  }
+  html += `</div><button class="btn btn-sm" onclick="addSettingsRow('type')">+ Add Type</button></div>`;
+
+  // Groups
+  html += `<div class="settings-section"><h3>Groups</h3><div id="settings-groups">`;
+  for (const [k, v] of Object.entries(CONFIG.groups)) {
+    html += settingsRow('group', k, v.label, v.color);
+  }
+  html += `</div><button class="btn btn-sm" onclick="addSettingsRow('group')">+ Add Group</button></div>`;
+
+  // Phases
+  html += `<div class="settings-section"><h3>Phases</h3><div id="settings-phases">`;
+  for (const p of CONFIG.phases) {
+    html += settingsPhaseRow(p, CONFIG.phaseLabels[p] || p);
+  }
+  html += `</div><button class="btn btn-sm" onclick="addSettingsPhaseRow()">+ Add Phase</button></div>`;
+
+  // Statuses
+  html += `<div class="settings-section"><h3>Statuses</h3><div id="settings-statuses">`;
+  for (const s of CONFIG.statuses) {
+    html += settingsSimpleRow('status', s);
+  }
+  html += `</div><button class="btn btn-sm" onclick="addSettingsSimpleRow('status')">+ Add Status</button></div>`;
+
+  // Scan Paths
+  html += `<div class="settings-section"><h3>Scan Paths</h3><div id="settings-scanpaths">`;
+  for (const sp of (CONFIG.scanPaths || [])) {
+    html += settingsSimpleRow('scanpath', sp);
+  }
+  html += `</div><button class="btn btn-sm" onclick="addSettingsSimpleRow('scanpath')">+ Add Path</button></div>`;
+
+  content.innerHTML = html;
+  modal.classList.remove('hidden');
+}
+
+function settingsRow(prefix, key, label, color) {
+  return `<div class="settings-row" data-prefix="${prefix}">
+    <input type="text" placeholder="key" value="${esc(key)}" class="s-key" style="max-width:100px">
+    <input type="text" placeholder="label" value="${esc(label)}" class="s-label">
+    <input type="color" value="${color}" class="s-color">
+    <button class="btn btn-sm" onclick="this.parentElement.remove()" style="color:var(--red)">&#10005;</button>
+  </div>`;
+}
+
+function settingsPhaseRow(key, label) {
+  return `<div class="settings-row" data-prefix="phase">
+    <input type="text" placeholder="key" value="${esc(key)}" class="s-key" style="max-width:120px">
+    <input type="text" placeholder="label" value="${esc(label)}" class="s-label">
+    <button class="btn btn-sm" onclick="this.parentElement.remove()" style="color:var(--red)">&#10005;</button>
+  </div>`;
+}
+
+function settingsSimpleRow(prefix, value) {
+  return `<div class="settings-row" data-prefix="${prefix}">
+    <input type="text" value="${esc(value)}" class="s-value">
+    <button class="btn btn-sm" onclick="this.parentElement.remove()" style="color:var(--red)">&#10005;</button>
+  </div>`;
+}
+
+function addSettingsRow(prefix) {
+  const container = document.getElementById(`settings-${prefix}s`);
+  container.insertAdjacentHTML('beforeend', settingsRow(prefix, '', '', '#58a6ff'));
+}
+
+function addSettingsPhaseRow() {
+  const container = document.getElementById('settings-phases');
+  container.insertAdjacentHTML('beforeend', settingsPhaseRow('', ''));
+}
+
+function addSettingsSimpleRow(prefix) {
+  const container = document.getElementById(`settings-${prefix}s`);
+  container.insertAdjacentHTML('beforeend', settingsSimpleRow(prefix, ''));
+}
+
+function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+async function saveSettings() {
+  const newConfig = { types: {}, groups: {}, phases: [], phaseLabels: {}, statuses: [], scanPaths: [] };
+
+  // Types
+  document.querySelectorAll('#settings-types .settings-row').forEach(row => {
+    const key = row.querySelector('.s-key').value.trim();
+    const label = row.querySelector('.s-label').value.trim();
+    const color = row.querySelector('.s-color').value;
+    if (key) newConfig.types[key] = { label: label || key, color };
+  });
+
+  // Groups
+  document.querySelectorAll('#settings-groups .settings-row').forEach(row => {
+    const key = row.querySelector('.s-key').value.trim();
+    const label = row.querySelector('.s-label').value.trim();
+    const color = row.querySelector('.s-color').value;
+    if (key) newConfig.groups[key] = { label: label || key, color };
+  });
+
+  // Phases
+  document.querySelectorAll('#settings-phases .settings-row').forEach(row => {
+    const key = row.querySelector('.s-key').value.trim();
+    const label = row.querySelector('.s-label').value.trim();
+    if (key) { newConfig.phases.push(key); newConfig.phaseLabels[key] = label || key; }
+  });
+
+  // Statuses
+  document.querySelectorAll('#settings-statuses .settings-row').forEach(row => {
+    const val = row.querySelector('.s-value').value.trim();
+    if (val) newConfig.statuses.push(val);
+  });
+
+  // Scan Paths
+  document.querySelectorAll('#settings-scanpaths .settings-row').forEach(row => {
+    const val = row.querySelector('.s-value').value.trim();
+    if (val) newConfig.scanPaths.push(val);
+  });
+
+  if (!Object.keys(newConfig.types).length || !Object.keys(newConfig.groups).length || !newConfig.phases.length || !newConfig.statuses.length) {
+    return alert('Types, groups, phases, and statuses cannot be empty.');
+  }
+
+  await fetch('/api/config', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newConfig) });
+  closeSettingsModal();
+  await fetchConfig();
+  render();
+}
+
+// --- Scan Modal ---
+
+let scanResults = [];
+
+async function openScanModal() {
+  const modal = document.getElementById('scan-modal');
+  const content = document.getElementById('scan-content');
+  const importBtn = document.getElementById('scan-import-btn');
+  content.innerHTML = '<p style="color:var(--fg2)">Scanning...</p>';
+  importBtn.classList.add('hidden');
+  modal.classList.remove('hidden');
+
+  const res = await fetch('/api/scan', { method: 'POST' });
+  const data = await res.json();
+  scanResults = data.repos || [];
+
+  if (!scanResults.length) {
+    content.innerHTML = '<p style="color:var(--fg2)">No repos found. Add scan paths in Settings first.</p>';
+    return;
+  }
+
+  const trackedPaths = new Set(projects.map(p => normPath(p.path)).filter(Boolean));
+  let html = '';
+  for (let i = 0; i < scanResults.length; i++) {
+    const r = scanResults[i];
+    const isTracked = trackedPaths.has(normPath(r.path));
+    html += `<div class="scan-item ${isTracked ? 'tracked' : ''}">
+      <input type="checkbox" class="scan-cb" data-idx="${i}" ${isTracked ? 'disabled' : ''}>
+      <label>
+        <span><strong>${esc(r.name)}</strong> <span style="color:var(--fg3)">${esc(r.parentFolder)}</span></span>
+        <span class="scan-path">${esc(r.path)}</span>
+        ${isTracked ? '<span class="scan-tracked">(tracked)</span>' : ''}
+      </label>
+    </div>`;
+  }
+  content.innerHTML = html;
+  importBtn.classList.remove('hidden');
+}
+
+function normPath(p) {
+  return (p || '').replace(/\\/g, '/').toLowerCase();
+}
+
+function closeScanModal() { document.getElementById('scan-modal').classList.add('hidden'); }
+
+async function importScanned() {
+  const checkboxes = document.querySelectorAll('.scan-cb:checked');
+  if (!checkboxes.length) return alert('No repos selected');
+  const btn = document.getElementById('scan-import-btn');
+  btn.disabled = true;
+  btn.textContent = 'Importing...';
+
+  for (const cb of checkboxes) {
+    const r = scanResults[parseInt(cb.dataset.idx)];
+    await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: r.name,
+        type: 'code',
+        group: 'digital',
+        phase: 'discovery',
+        category: r.parentFolder,
+        path: r.path
+      })
+    });
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Import Selected';
+  closeScanModal();
   await fetchProjects();
 }
 
@@ -430,10 +754,122 @@ function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso); return d.t
 
 // Keyboard
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeDetail(); closeAddModal(); document.getElementById('ctx-menu').classList.add('hidden'); }
+  if (e.key === 'Escape') {
+    closeDetail();
+    closeAddModal();
+    closeSettingsModal();
+    closeScanModal();
+    document.getElementById('ctx-menu').classList.add('hidden');
+  }
 });
 
-fetchProjects();
+// Drag-and-drop with hold-to-drag (1 second hold before drag activates)
+let dragState = null;
+
+function initDragAndDrop() {
+  document.querySelectorAll('.pipeline-col .card').forEach(card => {
+    card.addEventListener('mousedown', onCardMouseDown);
+    card.addEventListener('touchstart', onCardTouchStart, { passive: false });
+  });
+  document.querySelectorAll('.pipeline-col').forEach(col => {
+    col.addEventListener('dragover', onColDragOver);
+    col.addEventListener('dragleave', onColDragLeave);
+    col.addEventListener('drop', onColDrop);
+  });
+}
+
+function onCardMouseDown(e) {
+  if (e.button !== 0) return;
+  const card = e.currentTarget;
+  const holdTimer = setTimeout(() => {
+    card.draggable = true;
+    card.classList.add('drag-held');
+    dragState = { id: card.dataset.id };
+  }, 600);
+  const cancel = () => { clearTimeout(holdTimer); card.classList.remove('drag-held'); };
+  card.addEventListener('mouseleave', cancel, { once: true });
+  card.addEventListener('mouseup', cancel, { once: true });
+  card.addEventListener('dragstart', (de) => {
+    if (!dragState) { de.preventDefault(); return; }
+    card.classList.remove('drag-held');
+    card.classList.add('dragging');
+    de.dataTransfer.effectAllowed = 'move';
+    de.dataTransfer.setData('text/plain', dragState.id);
+  });
+  card.addEventListener('dragend', () => {
+    card.draggable = false;
+    card.classList.remove('dragging', 'drag-held');
+    document.querySelectorAll('.pipeline-col.drag-over').forEach(c => c.classList.remove('drag-over'));
+    dragState = null;
+  });
+}
+
+function onCardTouchStart(e) {
+  const card = e.currentTarget;
+  const touch = e.touches[0];
+  let moved = false;
+  const holdTimer = setTimeout(() => {
+    if (!moved) {
+      card.classList.add('drag-held');
+      dragState = { id: card.dataset.id, el: card, touch: true };
+      e.preventDefault();
+    }
+  }, 600);
+  const onMove = (me) => {
+    if (!dragState || !dragState.touch) { moved = true; return; }
+    me.preventDefault();
+    const t = me.touches[0];
+    const cols = document.querySelectorAll('.pipeline-col');
+    cols.forEach(c => {
+      const r = c.getBoundingClientRect();
+      c.classList.toggle('drag-over', t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom);
+    });
+  };
+  const onEnd = async (ue) => {
+    clearTimeout(holdTimer);
+    card.classList.remove('drag-held');
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+    if (dragState && dragState.touch) {
+      const t = ue.changedTouches[0];
+      const target = document.querySelectorAll('.pipeline-col.drag-over')[0];
+      if (target) {
+        const phase = target.dataset.phase;
+        await setField(dragState.id, 'phase', phase);
+      }
+      document.querySelectorAll('.pipeline-col.drag-over').forEach(c => c.classList.remove('drag-over'));
+      dragState = null;
+    }
+  };
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend', onEnd);
+}
+
+function onColDragOver(e) {
+  if (!dragState) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+
+function onColDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+async function onColDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const id = e.dataTransfer.getData('text/plain');
+  const phase = e.currentTarget.dataset.phase;
+  if (id && phase) await setField(id, 'phase', phase);
+}
+
+// Init: load config first, then projects
+async function init() {
+  await fetchConfig();
+  await fetchProjects();
+}
+init();
 </script>
 </body>
 </html>

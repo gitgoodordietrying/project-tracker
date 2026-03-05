@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#58a6ff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#58a6ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="300" rx="12" fill="url(#bgGrad)"/>
+
+  <!-- Subtle top glow -->
+  <rect width="1200" height="150" rx="12" fill="url(#glowGrad)"/>
+
+  <!-- Border -->
+  <rect x="0.5" y="0.5" width="1199" height="299" rx="12" fill="none" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Icon: colored progress bars (matches favicon) -->
+  <g transform="translate(80, 85)">
+    <rect width="130" height="130" rx="16" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+    <rect x="18" y="26" width="72" height="11" rx="5.5" fill="#3fb950"/>
+    <rect x="18" y="49" width="52" height="11" rx="5.5" fill="#58a6ff"/>
+    <rect x="18" y="72" width="88" height="11" rx="5.5" fill="#d29922"/>
+    <rect x="18" y="95" width="38" height="11" rx="5.5" fill="#bc8cff"/>
+  </g>
+
+  <!-- Title -->
+  <text x="248" y="148" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="48" font-weight="700" fill="#e6edf3" letter-spacing="-0.5">Project Tracker</text>
+
+  <!-- Tagline -->
+  <text x="250" y="188" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#8b949e">A human-agent shared ledger</text>
+
+  <!-- Pill badges -->
+  <g transform="translate(250, 210)">
+    <!-- JSON badge -->
+    <rect width="62" height="26" rx="13" fill="rgba(63,185,80,0.15)" stroke="rgba(63,185,80,0.3)" stroke-width="1"/>
+    <text x="31" y="17" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#3fb950" text-anchor="middle">JSON</text>
+
+    <!-- REST API badge -->
+    <rect x="72" width="84" height="26" rx="13" fill="rgba(88,166,255,0.15)" stroke="rgba(88,166,255,0.3)" stroke-width="1"/>
+    <text x="114" y="17" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#58a6ff" text-anchor="middle">REST API</text>
+
+    <!-- Localhost badge -->
+    <rect x="166" width="88" height="26" rx="13" fill="rgba(210,153,34,0.15)" stroke="rgba(210,153,34,0.3)" stroke-width="1"/>
+    <text x="210" y="17" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#d29922" text-anchor="middle">Localhost</text>
+
+    <!-- Customizable badge -->
+    <rect x="264" width="114" height="26" rx="13" fill="rgba(188,140,255,0.15)" stroke="rgba(188,140,255,0.3)" stroke-width="1"/>
+    <text x="321" y="17" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#bc8cff" text-anchor="middle">Customizable</text>
+  </g>
+
+  <!-- Decorative: faint pipeline arrows on the right -->
+  <g transform="translate(770, 110)" opacity="0.12">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="500">
+      <tspan x="0" y="0">DISCOVERY</tspan>
+      <tspan x="100" y="0" fill="#8b949e">&#x2192;</tspan>
+      <tspan x="120" y="0">PLANNING</tspan>
+      <tspan x="210" y="0" fill="#8b949e">&#x2192;</tspan>
+      <tspan x="230" y="0">DEVELOPMENT</tspan>
+      <tspan x="0" y="30">POLISH</tspan>
+      <tspan x="65" y="30" fill="#8b949e">&#x2192;</tspan>
+      <tspan x="85" y="30">MAINTENANCE</tspan>
+    </text>
+  </g>
+
+  <!-- Decorative: faint data lines on the right -->
+  <g transform="translate(800, 170)" opacity="0.06">
+    <rect x="0" y="0" width="120" height="6" rx="3" fill="#3fb950"/>
+    <rect x="0" y="14" width="85" height="6" rx="3" fill="#58a6ff"/>
+    <rect x="0" y="28" width="150" height="6" rx="3" fill="#d29922"/>
+    <rect x="0" y="42" width="60" height="6" rx="3" fill="#bc8cff"/>
+    <rect x="0" y="56" width="105" height="6" rx="3" fill="#3fb950"/>
+    <rect x="130" y="0" width="90" height="6" rx="3" fill="#bc8cff"/>
+    <rect x="95" y="14" width="110" height="6" rx="3" fill="#d29922"/>
+    <rect x="160" y="28" width="70" height="6" rx="3" fill="#58a6ff"/>
+    <rect x="70" y="42" width="130" height="6" rx="3" fill="#3fb950"/>
+    <rect x="115" y="56" width="95" height="6" rx="3" fill="#bc8cff"/>
+  </g>
+</svg>

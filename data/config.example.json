@@ -1,0 +1,28 @@
+{
+  "types": {
+    "code": { "label": "Code", "color": "#58a6ff" },
+    "game": { "label": "Game Dev", "color": "#f778ba" },
+    "creative": { "label": "Creative", "color": "#bc8cff" },
+    "education": { "label": "Education", "color": "#79c0ff" },
+    "business": { "label": "Business", "color": "#e3b341" },
+    "house": { "label": "House", "color": "#f0883e" },
+    "garden": { "label": "Garden & Farm", "color": "#3fb950" },
+    "travel": { "label": "Travel", "color": "#a5d6ff" },
+    "lifestyle": { "label": "Lifestyle", "color": "#8b949e" }
+  },
+  "groups": {
+    "digital": { "label": "Digital", "color": "#58a6ff" },
+    "physical": { "label": "Physical", "color": "#f0883e" },
+    "social": { "label": "Social", "color": "#bc8cff" }
+  },
+  "phases": ["discovery", "planning", "development", "polish", "maintenance"],
+  "phaseLabels": {
+    "discovery": "Discovery",
+    "planning": "Planning",
+    "development": "Development",
+    "polish": "Polish",
+    "maintenance": "Maintenance"
+  },
+  "statuses": ["active", "paused", "done", "cancelled", "archived"],
+  "scanPaths": []
+}
